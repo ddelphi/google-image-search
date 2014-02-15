@@ -1,4 +1,3 @@
-
 /*
 	@description
 		Google image search script
@@ -533,7 +532,7 @@ var StyleClass = {
 var resetStyleClass = "google_image_search_reset_20140118";
 var options = {
 	"main": {
-		"cancelKey": 32,
+		"cancelKey": 9,
 		"cancelStyleClass": resetStyleClass,
 		"splash": {
 			"content_on": "Google Image Search ON",
