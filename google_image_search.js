@@ -403,7 +403,7 @@ var Action_GoogleImage = {
 		var url = evt.target.getAttribute("url"),
 			finalUrl = this.googleImageUrlPattern.replace("<url>", url);
 
-		window.open(finalUrl);
+		window.open(encodeURI(finalUrl));
 	},
 	run: function() {
 		// noop
