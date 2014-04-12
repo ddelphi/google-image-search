@@ -8,7 +8,7 @@ The codes use google.com.hk server for image searching.
 ## usage
 To use this script, you can copy the google_image_search.bookmarklet.js content to the url section of the bookmark editing dialog. Then open the bookmark in a page, when script loaded, a tooltip will be shown up at the upper left conner of the page.
 
-To turn the script off, you can pressed the **[shift]** key to do the change.
+To turn the script off, you can pressed the **[shift]** key to do the toggle.
 
 Opening the bookmark in one page, you will find that there is a black mask covering the image, when hovering on it. finally you can simple click the image for searching it.
 

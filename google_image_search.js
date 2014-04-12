@@ -15,7 +15,7 @@ $(document).ready(function() {
 // start
 
 
-
+// simple event
 var EventSystem = {
 	init: function() {
 		this.count = 0;
@@ -41,6 +41,7 @@ var EventSystem = {
 	}
 };
 
+// simple class instructor
 var Klass = {
 	"new": function(cls /*, args*/) {
 		function fn() {}
@@ -100,11 +101,11 @@ var Ui = {
 	delAttribute: function(key) {
 		this.node.removeAttr(key);
 	},
-	setClass: function(class) {
-		this.node.addClass(class);
+	setClass: function(cls) {
+		this.node.addClass(cls);
 	},
-	delClass: function(class) {
-		this.node.removeClass(class);
+	delClass: function(cls) {
+		this.node.removeClass(cls);
 	},
 	setId: function(id) {
 		this.node.attr("id", id);
@@ -129,7 +130,7 @@ var Ui = {
 		this.node.css.apply(this.node, arguments);
 	},
 	getStyle: function(key) {
-		return 	this.node.css(key);
+		return this.node.css(key);
 	},
 	setDimention: function(w, h) {
 		this.node.css({
@@ -219,25 +220,27 @@ var Ui = {
 		this.__initNode();
 		this.__initEvent();
 	},
+	// will not initialize the UI object,
+	// until the sub class call the super_init() method
 	extendStill: function(obj) {
 		var newObj = $.extend({}, this, obj);
 		return newObj;
 	},
+	// will auto initilize the UI object
 	extend: function(obj) {
 		var newObj = $.extend({}, this, obj);
 
-		newObj.__initNode();
-		newObj.__initEvent();
+		newObj.super_init()
 		return newObj;
 	},
 };
 
-Uis = $.extend({}, Ui, {
+var Uis = $.extend({}, Ui, {
 
 });
 
 
-
+// the tooltip ui
 var Ui_tooltip = Ui.extendStill({
 	init: function(params) {
 		// node is jquery object
@@ -281,7 +284,9 @@ var Ui_tooltip = Ui.extendStill({
 	}
 });
 
-
+// the mask ui
+// this will create a mark box over the image element in page,
+// and will show the box when mouse over the image
 var SchemeA = Uis.extendStill({
 	init: function(params) {
 		// images is jquery object
@@ -338,11 +343,11 @@ var SchemeA = Uis.extendStill({
 	// deal with the mask nodes
 	applyMaskChange: function(imageNodes) {
 		var that = this,
-			imagesNodes = imageNodes || this.images;
+			imagesNodes = imageNodes || this.images,
 			nodes = this.node;
 
 		$(imagesNodes).each(function(n, v) {
-			$image = $(this);
+			var $image = $(this);
 			
 			$(nodes[n])
 				.attr({
@@ -386,6 +391,9 @@ var SchemeA = Uis.extendStill({
 	}
 });
 
+// the google image search action object
+// this object will register to the scheme/onclick event,
+// to perform the google image search action
 var Action_GoogleImage = {
 	init: function(params) {
 		this.googleImageUrlPattern = params.googleImageUrlPattern;
@@ -407,86 +415,6 @@ var Action_GoogleImage = {
 	},
 	run: function() {
 		// noop
-	}
-};
-
-var Main = {
-	init: function(dicts) {
-		this.options = dicts.options;
-		this.scheme = dicts.scheme;
-		this.tooltip = dicts.tooltip;
-		this.action_googleImage = dicts.action_googleImage;
-
-		this.splashData = dicts.splash;
-		this.initCancelStyle(dicts);
-		this.initEventLink();
-	},
-	initEventLink: function() {
-		var that = this;
-		
-		$(document).bind("keyup", function(evt) {
-			that.cancelStyle(evt);
-		});
-		SYS_eventSystem.register("cancelStyle", function(data) {
-			if (data.type) {
-				that.splashTooltip(false);
-			} else {
-				that.splashTooltip(true);
-			}
-		});
-	},
-	initCancelStyle: function(dicts) {
-		this.cancelKey = dicts.cancelKey;
-		this.cancelStyleClass = dicts.cancelStyleClass;
-		this.$cancelNodes = $("." + this.cancelStyleClass);
-		this.cancelToggle = false;
-	},
-	cancelStyle: function(evt) {
-		if (this.cancelKey !== evt.which) return;
-		
-		if (!this.cancelToggle) {
-			this.cancelToggle = true;
-			this.$cancelNodes.css("display", "none");
-			SYS_eventSystem.trigger("cancelStyle", {
-				"type": true
-			});
-		} else {
-			this.cancelToggle = false;
-			this.$cancelNodes.css("display", "block");
-			SYS_eventSystem.trigger("cancelStyle", {
-				"type": false
-			});
-		}
-	},
-	performSplashTooltip: function(data) {
-		// data.content, data.time
-		this.tooltip.setContent(data.content);
-		this.tooltip.setStyle(data.style);
-		this.tooltip.perform({
-			"type": "flash",
-			"data": data.time
-		});
-	},
-	splashTooltip: function(flag) {
-		var data;
-		if (flag) {
-			data = {
-				"content": this.splashData.content_on,
-				"style": this.splashData.style_on,
-				"time": this.splashData.time
-			};
-		} else {
-			data = {
-				"content": this.splashData.content_off,
-				"style": this.splashData.style_off,
-				"time": this.splashData.time
-			};
-		}
-		this.performSplashTooltip(data);
-	},
-	run: function() {
-		this.scheme.perform();
-		this.splashTooltip(true);
 	}
 };
 
@@ -516,7 +444,7 @@ var StyleClass = {
 			parent = this.parent ? this.parent : document.body;
 		}
 		var styleNode = document.createElement("style");
-			classStringNode = document.createTextNode(classString);
+		var classStringNode = document.createTextNode(classString);
 
 		styleNode.appendChild(classStringNode);
 		parent.appendChild(styleNode);
@@ -529,13 +457,98 @@ var StyleClass = {
 
 
 
+var Main = {
+	init: function(dicts) {
+		this.options = dicts.options;
+		this.scheme = dicts.scheme;
+		this.tooltip = dicts.tooltip;
+		this.action_googleImage = dicts.action_googleImage;
+
+		this.splashData = dicts.splash;
+		this.initCancelStyle(dicts);
+		this.initEvents();
+	},
+	initEvents: function() {
+		var that = this;
+		
+		$(document).bind("keyup", function(evt) {
+			that.cancelStyle(evt);
+		});
+		SYS_eventSystem.register("cancelStyle", function(data) {
+			if (data.type) {
+				that.splashTooltip(false);
+			} else {
+				that.splashTooltip(true);
+			}
+		});
+	},
+	// the toggle off style
+	initCancelStyle: function(dicts) {
+		this.cancelKey = dicts.cancelKey;
+		this.cancelStyleClass = dicts.cancelStyleClass;
+		this.$cancelNodes = $("." + this.cancelStyleClass);
+		this.cancelToggle = false;
+	},
+	// the action
+	cancelStyle: function(evt) {
+		if (this.cancelKey !== evt.which) return;
+		
+		if (!this.cancelToggle) {
+			this.cancelToggle = true;
+			this.$cancelNodes.css("display", "none");
+			SYS_eventSystem.trigger("cancelStyle", {
+				"type": true
+			});
+		} else {
+			this.cancelToggle = false;
+			this.$cancelNodes.css("display", "block");
+			SYS_eventSystem.trigger("cancelStyle", {
+				"type": false
+			});
+		}
+	},
+	splashTooltip: function(flag) {
+		var data;
+		if (flag) {
+			data = {
+				"content": this.splashData.content_on,
+				"style": this.splashData.style_on,
+				"time": this.splashData.time
+			};
+		} else {
+			data = {
+				"content": this.splashData.content_off,
+				"style": this.splashData.style_off,
+				"time": this.splashData.time
+			};
+		}
+		this.doSplashTooltip(data);
+	},
+	doSplashTooltip: function(data) {
+		this.tooltip.setContent(data.content);
+		this.tooltip.setStyle(data.style);
+		this.tooltip.perform({
+			"type": "flash",
+			"data": data.time
+		});
+	},
+	run: function() {
+		this.scheme.perform();
+		this.splashTooltip(true);
+	}
+};
+
+
+
+
 var resetStyleClass = "google_image_search_reset_20140118";
+
 var options = {
 	"main": {
 		"cancelKey": 16,
 		"cancelStyleClass": resetStyleClass,
 		"splash": {
-			"content_on": "Google Image Search ON",
+			"content_on": "Google Image Search ON (shift key to toggle)",
 			"content_off": "Google Image Search OFF",
 			"style_on": {
 				"background": "#3E86FB"
@@ -546,6 +559,7 @@ var options = {
 			"time": 3000
 		}
 	},
+
 	"tooltip": {
 		"content": "Google Image Search",
 		"parent": document.body,
@@ -560,8 +574,9 @@ var options = {
 		},
 		"class": resetStyleClass,
 		"style": {
-			"position": "absolute",
 			"display": "none",
+			"position": "absolute",
+			"zIndex": "100000",
 			"width": "auto",
 			"height": "auto",
 			"padding": "16px 30px",
@@ -572,6 +587,7 @@ var options = {
 			"font": "bold 12px/1.2 arial"
 		}
 	},
+
 	"scheme": {
 		"class": "imageSerach_schemeA " + resetStyleClass,
 		"parent": document.body,
@@ -590,6 +606,11 @@ var options = {
 			"backgroundColor": "#333",
 		}
 	},
+	
+	"action_googleImage": {
+		"googleImageUrlPattern": "http://www.google.com.hk/searchbyimage?image_url=<url>"
+	},
+	
 	"styleClass": {
 		"style_reset": {
 			"class": resetStyleClass,
@@ -609,19 +630,16 @@ var options = {
 				"background": 0
 			}
 		}
-	},
-	"action_googleImage": {
-		"googleImageUrlPattern": "http://www.google.com.hk/searchbyimage?image_url=<url>"
 	}
 };
 
 var SYS_eventSystem = Klass.new(EventSystem);
-
 var styleClass_reset = Klass.new(StyleClass, $.extend({}, options.styleClass.style_reset));
 
 var tooltip = Klass.new(Ui_tooltip, $.extend({}, options.tooltip));
 var scheme = Klass.new(SchemeA, $.extend({}, options.scheme));
 var action_googleImage = Klass.new(Action_GoogleImage, $.extend({}, options.action_googleImage));
+
 var main = Klass.new(Main, $.extend({
 	"options": options,
 	"scheme": scheme,
