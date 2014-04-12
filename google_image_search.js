@@ -575,7 +575,7 @@ var options = {
 		"class": resetStyleClass,
 		"style": {
 			"display": "none",
-			"position": "absolute",
+			"position": "fixed",
 			"zIndex": "100000",
 			"width": "auto",
 			"height": "auto",
