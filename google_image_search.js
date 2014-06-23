@@ -14,6 +14,9 @@
 $(document).ready(function() {
 // start
 
+/*
+	the base libs
+*/
 
 // simple event
 var EventSystem = {
@@ -240,6 +243,13 @@ var Uis = $.extend({}, Ui, {
 });
 
 
+
+
+/*
+	the custom scripts
+*/
+
+
 // the tooltip ui
 var Ui_tooltip = Ui.extendStill({
 	init: function(params) {
@@ -257,10 +267,10 @@ var Ui_tooltip = Ui.extendStill({
 		this.super_init();
 	},
 	updatePosition: function() {
-		var top = $(document.body).scrollTop();
-		this.setPosition({
-			"y": top
-		});
+		// var top = $(document.body).scrollTop();
+		// this.setPosition({
+		// 	"y": top
+		// });
 	},
 	flash: function(time) {
 		if (typeof time !== "number") {
@@ -541,12 +551,12 @@ var Main = {
 
 
 
-var resetStyleClass = "google_image_search_reset_20140118";
+var RESET_STYLE_CLASS = "google_image_search_reset_20140118";
 
 var options = {
 	"main": {
 		"cancelKey": 16,
-		"cancelStyleClass": resetStyleClass,
+		"cancelStyleClass": RESET_STYLE_CLASS,
 		"splash": {
 			"content_on": "Google Image Search ON (shift key to toggle)",
 			"content_off": "Google Image Search OFF",
@@ -572,7 +582,7 @@ var options = {
 			"type": "fade",
 			"time": 400
 		},
-		"class": resetStyleClass,
+		"class": RESET_STYLE_CLASS,
 		"style": {
 			"display": "none",
 			"position": "fixed",
@@ -589,7 +599,7 @@ var options = {
 	},
 
 	"scheme": {
-		"class": "imageSerach_schemeA " + resetStyleClass,
+		"class": "imageSerach_schemeA " + RESET_STYLE_CLASS,
 		"parent": document.body,
 		"style": {
 			"position": "absolute",
@@ -608,12 +618,12 @@ var options = {
 	},
 	
 	"action_googleImage": {
-		"googleImageUrlPattern": "http://www.google.com.hk/searchbyimage?image_url=<url>"
+		"googleImageUrlPattern": "http://www.google.com/searchbyimage?image_url=<url>"
 	},
 	
 	"styleClass": {
 		"style_reset": {
-			"class": resetStyleClass,
+			"class": RESET_STYLE_CLASS,
 			"parent": "",
 			"style": {
 				"display": "block",
