@@ -1,4 +1,9 @@
+(function() {
+
 function s() {
+	window.gis_options = {
+		"googleDomain": "http://www.google.com"
+	};
 	var script = [
 		{"name": "jQuery",
 			"url": "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"},
@@ -7,7 +12,6 @@ function s() {
 	];
 
 	var dataId = "googleImageSearch_20140212";
-
 	var fragment = document.createDocumentFragment();
 	for (var i = 0; i < script.length; i++) {
 		if (document.querySelector("script[data-id=%s]".replace("%s", dataId))) {
@@ -28,3 +32,5 @@ function main() {
 	s();
 }
 main();
+
+})()

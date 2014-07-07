@@ -11,8 +11,12 @@
 
 
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
 // start
+
+var $ = jQuery;
+
+
 
 /*
 	the base libs
@@ -52,7 +56,7 @@ var Klass = {
 		fn.prototype.contructor = cls;
 
 		var o = new fn();
-		if (typeof cls["init"] === "function") {
+		if (typeof cls.init === "function") {
 			cls.init.apply(o, [].slice.call(arguments, 1));
 		}
 		return o;
@@ -214,7 +218,7 @@ var Ui = {
 					var key = k;
 					return function(evt) {
 						that[key].call(that, evt);
-					}
+					};
 				})());
 			}
 		}
@@ -233,7 +237,7 @@ var Ui = {
 	extend: function(obj) {
 		var newObj = $.extend({}, this, obj);
 
-		newObj.super_init()
+		newObj.super_init();
 		return newObj;
 	},
 };
@@ -316,6 +320,9 @@ var SchemeA = Uis.extendStill({
 		this.applyMaskChange();
 		this.show();
 	},
+
+	/* deal with nodes */
+
 	initNode: function() {
 		var wrapper = this.createImageMaskWrapper();
 		this.parent = wrapper.appendTo(this.parent);
@@ -371,9 +378,9 @@ var SchemeA = Uis.extendStill({
 				});
 		});
 	},
-	/*
-		deal with the events of the mask nodes
-	*/
+
+	/* deal with the events of the mask nodes */
+
 	on_Mouseenter: function(evt) {
 		this.performHover(evt, true);
 		SYS_eventSystem.trigger("scheme/onmouseenter", evt);
@@ -428,7 +435,8 @@ var Action_GoogleImage = {
 	}
 };
 
-
+// style class object
+// for making a style sheet text
 var StyleClass = {
 	init: function(params) {
 		this.class = params.class;
@@ -465,8 +473,28 @@ var StyleClass = {
 	}
 };
 
+var OptionsChanger = {
+	init: function(globalOptionsName) {
+		this.options = options;
+		this.gisOptions = window[globalOptionsName];
 
+		this.run();
+	},
+	changeGoogleDomain: function() {
+		var googleDomain = this.gisOptions.googleDomain;
+		var agi = this.options.action_googleImage;
+		
+		agi.googleImageUrlPattern = agi.googleImageUrlPattern.replace(agi.googleDomain, googleDomain);
+		console.log(agi.googleImageUrlPattern);
+	},
+	run: function() {
+		if (!this.gisOptions) { return; }
+		this.changeGoogleDomain();
+	}
+};
 
+// main object
+// initialize something, and connect those objects
 var Main = {
 	init: function(dicts) {
 		this.options = dicts.options;
@@ -549,9 +577,13 @@ var Main = {
 };
 
 
+/*
+	the main execution block
+*/
 
 
-var RESET_STYLE_CLASS = "google_image_search_reset_20140118";
+var RESET_STYLE_CLASS = "google_image_search_reset_124601181980";
+var GLOBAL_GIS_OPTIONS = "gis_options";
 
 var options = {
 	"main": {
@@ -618,7 +650,9 @@ var options = {
 	},
 	
 	"action_googleImage": {
-		"googleImageUrlPattern": "http://www.google.com/searchbyimage?image_url=<url>"
+		"googleImageUrlPattern": "http://www.google.com/searchbyimage?image_url=<url>",
+		// not used in action_googleImage object
+		"googleDomain": "http://www.google.com"
 	},
 	
 	"styleClass": {
@@ -645,6 +679,7 @@ var options = {
 
 var SYS_eventSystem = Klass.new(EventSystem);
 var styleClass_reset = Klass.new(StyleClass, $.extend({}, options.styleClass.style_reset));
+var optionsChanger = Klass.new(OptionsChanger, GLOBAL_GIS_OPTIONS);
 
 var tooltip = Klass.new(Ui_tooltip, $.extend({}, options.tooltip));
 var scheme = Klass.new(SchemeA, $.extend({}, options.scheme));
@@ -658,6 +693,7 @@ var main = Klass.new(Main, $.extend({
 }, options.main));
 
 styleClass_reset.appendClass();
+optionsChanger.run();
 main.run();
 
 
