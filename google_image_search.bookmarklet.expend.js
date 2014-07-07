@@ -8,7 +8,7 @@ function s() {
 		{"name": "jQuery",
 			"url": "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"},
 		{"name": "googleImageSearch",
-			"url": "https://raw.github.com/ddelphi/google-image-search/master/google_image_search.js"}
+			"url": "https://github.com/ddelphi/google-image-search-by-image/raw/master/google_image_search.js"}
 	];
 
 	var dataId = "googleImageSearch_20140212";
